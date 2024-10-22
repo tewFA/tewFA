@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>tewFA</title>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <link rel="manifest" href="manifest.json">
+  <script src="app.js" defer></script>
+  <script src="/dependencies/crypto.min.js" defer></script>
+  <script src="/dependencies/jsOTP.js" defer></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <meta property="og:title" content="tewFA">
+  <meta property="og:description" content="A modern, private, and secure 2FA app.">
+  <meta property="og:url" content="https://tewFA.pages.dev/">
+  <meta property="og:image" content="assets/icons/icon-512.png">
+  <meta property="og:image:alt" content="tewFA app logo">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="tewFA">
+  <meta name="twitter:description" content="A modern, private, and secure 2FA app.">
+  <meta name="twitter:image" content="https://tewFA.pages.dev/assets/icons/icon-512.png">
+  <meta name="twitter:site" content="@asboy2035">
+  <meta name="twitter:url" content="https://tewFA.pages.dev/">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <span id="timer">30s</span>
+    <button id="add-token-btn" onclick="showAddTokenModal()">Add</button>
+    <!-- <button id="settings-btn">
+      <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M14.279 2.152C13.909 2 13.439 2 12.5 2s-1.408 0-1.779.152a2 2 0 0 0-1.09 1.083c-.094.223-.13.484-.145.863a1.62 1.62 0 0 1-.796 1.353a1.64 1.64 0 0 1-1.579.008c-.338-.178-.583-.276-.825-.308a2.03 2.03 0 0 0-1.49.396c-.318.242-.553.646-1.022 1.453c-.47.807-.704 1.21-.757 1.605c-.07.526.074 1.058.4 1.479c.148.192.357.353.68.555c.477.297.783.803.783 1.361s-.306 1.064-.782 1.36c-.324.203-.533.364-.682.556a2 2 0 0 0-.399 1.479c.053.394.287.798.757 1.605s.704 1.21 1.022 1.453c.424.323.96.465 1.49.396c.242-.032.487-.13.825-.308a1.64 1.64 0 0 1 1.58.008c.486.28.774.795.795 1.353c.015.38.051.64.145.863c.204.49.596.88 1.09 1.083c.37.152.84.152 1.779.152s1.409 0 1.779-.152a2 2 0 0 0 1.09-1.083c.094-.223.13-.483.145-.863c.02-.558.309-1.074.796-1.353a1.64 1.64 0 0 1 1.579-.008c.338.178.583.276.825.308c.53.07 1.066-.073 1.49-.396c.318-.242.553-.646 1.022-1.453c.47-.807.704-1.21.757-1.605a2 2 0 0 0-.4-1.479c-.148-.192-.357-.353-.68-.555c-.477-.297-.783-.803-.783-1.361s.306-1.064.782-1.36c.324-.203.533-.364.682-.556a2 2 0 0 0 .399-1.479c-.053-.394-.287-.798-.757-1.605s-.704-1.21-1.022-1.453a2.03 2.03 0 0 0-1.49-.396c-.242.032-.487.13-.825.308a1.64 1.64 0 0 1-1.58-.008a1.62 1.62 0 0 1-.795-1.353c-.015-.38-.051-.64-.145-.863a2 2 0 0 0-1.09-1.083M12.5 15c1.67 0 3.023-1.343 3.023-3S14.169 9 12.5 9s-3.023 1.343-3.023 3s1.354 3 3.023 3" clip-rule="evenodd"/></svg>
+    </button> -->
+  </div>
+
+  <!-- Token List Container -->
+  <div class="token-list hidden" id="token-list">
+    <!-- Tokens will be dynamically generated here -->
+  </div>
+
+  <!-- Add token -->
+  <div id="add-token-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="vStack">
+        <input type="text" id="token-name" placeholder="Add Token" style="background: none; font-size: x-large; width: 100%; margin-bottom: 1.5rem; color: var(--text-color);">
+        <div class="hStack">
+          <input type="text" id="token-secret" placeholder="Secret Key">
+        </div>
+        <!-- Add a color picker input -->
+        <div class="hStack">
+          <label for="token-color">Pick a color:</label>
+          <input type="color" id="token-color" value="#760eff">
+        </div>
+        <div class="hStack" style="justify-content: space-between;">
+          <button onclick="closeAddTokenModal()">Cancel</button>
+          <button onclick="addToken()">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit token -->
+  <div id="edit-token-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="vStack">
+        <input type="text" id="edit-token-name" placeholder="Edit Token Name" style="background: none; font-size: x-large; width: 100%; margin-bottom: 1.5rem; color: var(--text-color);">
+        <div class="hStack">
+          <input type="text" id="edit-token-secret" placeholder="Edit Secret Key">
+        </div>
+        <!-- Color picker input -->
+        <div class="hStack">
+          <label for="edit-token-color">Pick a color:</label>
+          <input type="color" id="edit-token-color" value="#760eff">
+        </div>
+        <div class="hStack" style="justify-content: space-between;">
+          <button onclick="closeEditTokenModal()">Cancel</button>
+          <button onclick="updateToken()">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Passcode Setup Screen -->
+  <div id="passcode-setup-screen" class="hidden">
+    <h2>Set Your Passcode</h2>
+    <input type="password" id="new-passcode" placeholder="Enter New Passcode">
+    <input type="password" id="confirm-passcode" placeholder="Confirm Passcode">
+    <button onclick="setPasscode()">Set Passcode</button>
+  </div>
+
+  <!-- Passcode Lock Screen -->
+  <div id="passcode-lock-screen" class="hidden">
+    <h2>Enter Passcode</h2>
+    <input type="password" id="passcode" placeholder="Enter Passcode">
+    <button onclick="unlockApp()">Unlock</button>
+  </div>
+</body>
+</html>
