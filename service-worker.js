@@ -1,9 +1,12 @@
 	// Cache name (consider versioning to help with updates)
-  const CACHE_NAME = 'tewFA-cache-v1';
+  const CACHE_NAME = 'tewFA-cache-v1.1';
 
   // Files to cache
   const FILES_TO_CACHE = [
-    '/',
+    'index.html',
+    'service-worker.js',
+    'app.js',
+    'styles.css'
   ];
   
   // Install event

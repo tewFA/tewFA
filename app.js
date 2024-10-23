@@ -13,7 +13,7 @@ const secretKey = localStorage.getItem('secretKey') || '123'; // Store this secu
 const encrypt = (text) => CryptoJS.AES.encrypt(text, secretKey).toString();
 const decrypt = (ciphertext) => {
     try {
-        if (!ciphertext) return null; // If ciphertext is null or undefined, return null
+        if (!ciphertext) return null; // If cipher text is null or undefined, return null
         const bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
         return bytes.toString(CryptoJS.enc.Utf8);
     } catch (error) {
@@ -21,6 +21,28 @@ const decrypt = (ciphertext) => {
         return null; // Return null if decryption fails
     }
 };
+
+// Custom toast notifications
+function sendToast(message, color) {
+    const notificationCenter = document.getElementById('notifications');
+    
+    const toast = document.createElement('div');
+        toast.classList.add('toast');
+        toast.textContent = message;
+         notificationCenter.appendChild(toast);
+        
+        // Create a separate color circle element
+        const colorCircle = document.createElement('div');
+        colorCircle.classList.add('color-circle');
+        toast.appendChild(colorCircle);
+        
+        // Set the style.background property
+        colorCircle.style.background = color;
+    
+    setTimeout(() => {
+      toast.remove();
+    }, 3000); // wait for 3 seconds
+}
 
 // Function to calculate the remaining time in the current 30-second interval
 function getRemainingTime() {
@@ -46,6 +68,20 @@ function updateTimer() {
     // Refresh tokens if the interval has reset
     if (remainingTime === 30) {
         loadTokens(); // Refresh OTP tokens when a new interval starts
+        // tokenCodes.classList.remove('red');
+        const tokenCodes = document.getElementsByClassName('token-code');
+        for (let i = 0; i < tokenCodes.length; i++) {
+          tokenCodes[i].classList.remove('red');
+        }
+    }
+    
+    if (remainingTime < 6) {
+        // tokenCodes.classList.add('red');
+        const tokenCodes = document.getElementsByClassName('token-code');
+        for (let i = 0; i < tokenCodes.length; i++) {
+          tokenCodes[i].classList.add('red');
+        }
+
     }
 }
 
@@ -66,9 +102,9 @@ function setPasscode() {
 
         passcodeSetupScreen.classList.add('hidden');
         tokenList.classList.remove('hidden');
-        alert('Passcode set successfully!');
+        sendToast('Passcode set.', 'green');
     } else {
-        alert('Passcodes do not match. Please try again.');
+        alert('Passcodes do not match.');
     }
 }
 
@@ -86,9 +122,10 @@ function unlockApp() {
         if (encryptedTokens) {
             const tokens = JSON.parse(decrypt(encryptedTokens));
             renderTokens(tokens);
+            sendToast('Tokens loaded', 'var(--accent-color)');
         }
     } else {
-        alert('Incorrect passcode');
+        sendToast('Incorrect passcode', 'red');
     }
 }
 
@@ -124,7 +161,7 @@ function addToken() {
         localStorage.setItem('tokens', encrypt(JSON.stringify(tokens)));
         renderTokens(tokens);
         closeAddTokenModal();
-        alert('Token added successfully!');
+        sendToast('Token added successfully!', 'green');
     } else {
         alert('Please fill in both the name and secret key fields.');
     }
@@ -167,7 +204,7 @@ function updateToken() {
         localStorage.setItem('tokens', encrypt(JSON.stringify(tokens)));
         renderTokens(tokens);
         closeEditTokenModal();
-        alert('Token updated successfully!');
+        sendToast('Token updated.', 'green')
     } else {
         alert('Please fill in all fields.');
     }
@@ -208,7 +245,7 @@ function renderTokens(tokens) {
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text)
        .then(() => {
-            alert('Token code copied to clipboard!');
+            sendToast('Token copied!', 'green');
         })
        .catch(err => {
             console.error('Could not copy text: ', err);
@@ -231,6 +268,100 @@ function getOtp(secret) {
     return totp.getOtp(secret);  // Use jsOTP to generate the OTP
 }
 
+// Settings
+// Initialize the settings modal
+function initSettingsModal() {
+  const importButton = document.getElementById('import-button');
+  const exportButton = document.getElementById('export-button');
+
+  importButton.addEventListener('click', () => {
+    importTokensFromJSON();
+  });
+
+  exportButton.addEventListener('click', () => {
+    exportTokensToJSON();
+  });
+}
+
+// Import tokens from JSON
+function importTokensFromJSON() {
+  // Prompt the user to select a file
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'application/json';
+  
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Read the file contents
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const data = JSON.parse(e.target.result);
+        
+        const encryptedTokens = localStorage.getItem('tokens');
+        if (encryptedTokens) {
+          const tokens = JSON.parse(decrypt(encryptedTokens));
+          
+          // Update existing tokens with imported data
+          data.forEach((token, index) => {
+            tokens[index] = token;
+          });
+
+          localStorage.setItem('tokens', encrypt(JSON.stringify(tokens)));
+        } else {
+          // Create a new array if no tokens exist
+          localStorage.setItem('tokens', encrypt(JSON.stringify(data)));
+        }
+
+        // Update UI and close modal
+        renderTokens(data);
+        closeSettingsModal();
+      };
+
+      // Start reading the file as text
+      reader.readAsText(file);
+    }
+  });
+
+  // Append the file input to the DOM and trigger file selection
+  document.getElementById('data-management').appendChild(fileInput);
+  fileInput.click();  // Open file selection dialog
+
+  // Clean up by removing the file input after use
+  document.body.removeChild(fileInput);
+}
+// Export tokens to JSON
+function exportTokensToJSON() {
+  const encryptedTokens = localStorage.getItem('tokens');
+  if (encryptedTokens) {
+    // Get the token data
+    const tokens = JSON.parse(decrypt(encryptedTokens));
+    
+    // Create a blob of the JSON data
+    const blob = new Blob([JSON.stringify(tokens, null, 2)], { type: 'application/json' });
+    
+    // Create a URL for the blob
+    const url = URL.createObjectURL(blob);
+    
+    // Create an anchor element and trigger the download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tokens.json';
+    document.body.appendChild(a); // Append the link to the DOM
+    a.click(); // Simulate a click to download the file
+    document.body.removeChild(a); // Remove the link after download
+  } else {
+    alert('No tokens to export.');
+  }
+}
+// Open and close settings
+function openSettings() {
+    document.getElementById('settings-modal').classList.remove('hidden');
+}
+function closeSettings() {
+    document.getElementById('settings-modal').classList.add('hidden');
+}
+
 // Check if passcode setup is required on app load
 window.onload = () => {
     if (!isPasscodeSet()) {
@@ -241,6 +372,7 @@ window.onload = () => {
 
     loadTokens();
     startSyncedTimer();
+    initSettingsModal();
 }
 
 if ('serviceWorker' in navigator) {

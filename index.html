@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <link rel="manifest" href="manifest.json">
-  <script src="app.js" defer></script>
+  <script src="/app.js" defer></script>
   <script src="/dependencies/crypto.min.js" defer></script>
   <script src="/dependencies/jsOTP.js" defer></script>
   <link rel="stylesheet" href="styles.css">
@@ -33,9 +33,9 @@
   <div class="header">
     <span id="timer">30s</span>
     <button id="add-token-btn" onclick="showAddTokenModal()">Add</button>
-    <!-- <button id="settings-btn">
+    <button id="settings-btn" onclick="openSettings()">
       <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M14.279 2.152C13.909 2 13.439 2 12.5 2s-1.408 0-1.779.152a2 2 0 0 0-1.09 1.083c-.094.223-.13.484-.145.863a1.62 1.62 0 0 1-.796 1.353a1.64 1.64 0 0 1-1.579.008c-.338-.178-.583-.276-.825-.308a2.03 2.03 0 0 0-1.49.396c-.318.242-.553.646-1.022 1.453c-.47.807-.704 1.21-.757 1.605c-.07.526.074 1.058.4 1.479c.148.192.357.353.68.555c.477.297.783.803.783 1.361s-.306 1.064-.782 1.36c-.324.203-.533.364-.682.556a2 2 0 0 0-.399 1.479c.053.394.287.798.757 1.605s.704 1.21 1.022 1.453c.424.323.96.465 1.49.396c.242-.032.487-.13.825-.308a1.64 1.64 0 0 1 1.58.008c.486.28.774.795.795 1.353c.015.38.051.64.145.863c.204.49.596.88 1.09 1.083c.37.152.84.152 1.779.152s1.409 0 1.779-.152a2 2 0 0 0 1.09-1.083c.094-.223.13-.483.145-.863c.02-.558.309-1.074.796-1.353a1.64 1.64 0 0 1 1.579-.008c.338.178.583.276.825.308c.53.07 1.066-.073 1.49-.396c.318-.242.553-.646 1.022-1.453c.47-.807.704-1.21.757-1.605a2 2 0 0 0-.4-1.479c-.148-.192-.357-.353-.68-.555c-.477-.297-.783-.803-.783-1.361s.306-1.064.782-1.36c.324-.203.533-.364.682-.556a2 2 0 0 0 .399-1.479c-.053-.394-.287-.798-.757-1.605s-.704-1.21-1.022-1.453a2.03 2.03 0 0 0-1.49-.396c-.242.032-.487.13-.825.308a1.64 1.64 0 0 1-1.58-.008a1.62 1.62 0 0 1-.795-1.353c-.015-.38-.051-.64-.145-.863a2 2 0 0 0-1.09-1.083M12.5 15c1.67 0 3.023-1.343 3.023-3S14.169 9 12.5 9s-3.023 1.343-3.023 3s1.354 3 3.023 3" clip-rule="evenodd"/></svg>
-    </button> -->
+    </button>
   </div>
 
   <!-- Token List Container -->
@@ -46,6 +46,7 @@
   <!-- Add token -->
   <div id="add-token-modal" class="modal hidden">
     <div class="modal-content">
+      <button onclick="closeAddTokenModal()" class="close-btn">×</button>
       <div class="vStack">
         <input type="text" id="token-name" placeholder="Add Token" style="background: none; font-size: x-large; width: 100%; margin-bottom: 1.5rem; color: var(--text-color);">
         <div class="hStack">
@@ -56,10 +57,8 @@
           <label for="token-color">Pick a color:</label>
           <input type="color" id="token-color" value="#760eff">
         </div>
-        <div class="hStack" style="justify-content: space-between;">
-          <button onclick="closeAddTokenModal()">Cancel</button>
-          <button onclick="addToken()">Add</button>
-        </div>
+        <button onclick="addToken()">Add</button>
+        <p class="small">Token can be edited later.</p>
       </div>
     </div>
   </div>
@@ -67,6 +66,7 @@
   <!-- Edit token -->
   <div id="edit-token-modal" class="modal hidden">
     <div class="modal-content">
+      <button onclick="closeEditTokenModal()" class="close-btn">×</button>
       <div class="vStack">
         <input type="text" id="edit-token-name" placeholder="Edit Token Name" style="background: none; font-size: x-large; width: 100%; margin-bottom: 1.5rem; color: var(--text-color);">
         <div class="hStack">
@@ -77,27 +77,48 @@
           <label for="edit-token-color">Pick a color:</label>
           <input type="color" id="edit-token-color" value="#760eff">
         </div>
-        <div class="hStack" style="justify-content: space-between;">
-          <button onclick="closeEditTokenModal()">Cancel</button>
-          <button onclick="updateToken()">Done</button>
-        </div>
+        <button onclick="updateToken()">Done</button>
       </div>
+    </div>
+  </div>
+  
+  <!-- Settings Modal -->
+  <div class="modal hidden" id="settings-modal">
+    <div class="modal-content">
+      <h2>Settings</h2>
+      
+      <div class="vStack" id="data-management">
+        <h3>Data Management</h3>
+        <div class="hStack">
+          <button id="import-button" class="btn">Import</button>
+          <button id="export-button" class="btn">Export</button>
+        </div>
+        <p class="small">Importing tokens overwrites all your current tokens.</p>
+      </div>
+      
+      <button onclick="closeSettings()" class="close-btn">×</button>
     </div>
   </div>
 
   <!-- Passcode Setup Screen -->
   <div id="passcode-setup-screen" class="hidden">
-    <h2>Set Your Passcode</h2>
-    <input type="password" id="new-passcode" placeholder="Enter New Passcode">
+    <h1>Set Your Passcode</h1>
+    <input type="password" id="new-passcode" placeholder="Passcode">
     <input type="password" id="confirm-passcode" placeholder="Confirm Passcode">
     <button onclick="setPasscode()">Set Passcode</button>
+    
+    <p class="small">Currently, passwords cannot be changed.</p>
   </div>
 
   <!-- Passcode Lock Screen -->
   <div id="passcode-lock-screen" class="hidden">
-    <h2>Enter Passcode</h2>
+    <h1>Enter Passcode</h1>
     <input type="password" id="passcode" placeholder="Enter Passcode">
     <button onclick="unlockApp()">Unlock</button>
+  </div>
+  
+  <div id="notifications">
+    <!-- Notifications -->
   </div>
 </body>
 </html>
