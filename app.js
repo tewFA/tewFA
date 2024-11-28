@@ -7,6 +7,39 @@ const timerElement = document.getElementById('timer');
 const editTokenModal = document.getElementById('edit-token-modal');
 let editingTokenIndex = null; // To track the token being edited
 
+// Utilities
+
+function getLocation(id) {
+    const element = document.getElementById(id);
+    
+    if (element) {
+      const rect = element.getBoundingClientRect();
+      const x = rect.left; // X-coordinate
+      const y = rect.top;  // Y-coordinate
+      
+      return [x, y];
+    } else {
+      console.error('Element with the specified id not found.');
+    }
+}
+function show(id) {
+    document.getElementById(id).classList.remove('hidden');
+}
+function hide(id) {
+    document.getElementById(id).classList.add('hidden');
+}
+function showContextMenu(id, buttonId) {
+    getLocation(buttonId);
+    const buttonX = getLocation(buttonId)[0];
+    const buttonY = getLocation(buttonId)[1];
+    const contextMenuX = buttonX + 0; // X-coordinate of the context menu
+    const contextMenuY = buttonY + 50; // X-coordinate of the context menu
+    
+    show(id);
+    document.getElementById(id).style.left = contextMenuX + 'px';
+    document.getElementById(id).style.top  = contextMenuY + 'px';
+}
+
 // Encryption setup (using CryptoJS)
 const secretKey = localStorage.getItem('secretKey') || '123'; // Store this securely
 
