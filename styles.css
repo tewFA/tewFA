@@ -35,6 +35,8 @@ button, input {
 }
 input {
   font-size: 1rem;
+  background: var(--secondary-color);
+  color: var(--text-color);
 }
 button {
   width: fit-content;
@@ -297,9 +299,5 @@ input:active, input:focus {
     --secondary-color: rgba(34, 34, 34, 0.65);
     --secondary-border-color: rgba(41, 41, 41, 0.8);
     --text-color: #dcdcdc;
-  }
-  input {
-    background: black;
-    color: white;
   }
 }
