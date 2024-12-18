@@ -38,7 +38,7 @@ button {
   width: fit-content;
   
   background-color: var(--secondary-color);
-  color: white;
+  color: var(--text-color);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   font-size: small;
@@ -47,10 +47,10 @@ button {
 button:hover {
   background-color: var(--accent-color);
   color: var(--text-color);
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 button:active {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 button > svg {
   height: 1rem;
@@ -288,8 +288,9 @@ span {
   position: fixed;
   display: flex;
   flex-direction: column;
-  bottom: 1rem;
-  left: 1rem;
+  bottom: 0;
+  left: 0;
+  padding: 1.5rem;
   max-height: 15rem;
   overflow: scroll;
   gap: 0.25rem;

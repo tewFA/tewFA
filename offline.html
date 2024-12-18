@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <link rel="manifest" href="manifest.json">
   <script src="/app.js" defer></script>
@@ -25,6 +25,7 @@
   <meta name="twitter:title" content="tewFA">
   <meta name="twitter:description" content="A modern, private, and secure 2FA app.">
   <meta name="twitter:image" content="https://tewFA.pages.dev/assets/icon-500.png">
+  <meta name="twitter:site" content="@asboy2035">
   <meta name="twitter:url" content="https://tewFA.pages.dev/">
 </head>
 <body>
@@ -124,6 +125,7 @@
     <h1>Enter Passcode</h1>
     <input type="password" id="passcode" placeholder="Enter Passcode">
     <button onclick="unlockApp()">Unlock</button>
+    <p class="small" style="margin-top: 1rem;">Offline</p>
   </div>
   
   <div id="notifications">
