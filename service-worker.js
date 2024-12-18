@@ -1,12 +1,13 @@
 // Cache name
-const CACHE_NAME = 'tewFA-cache-v1.2';
+const CACHE_NAME = 'tewFA-cache-v1.';
 
 // Files to cache
 const FILES_TO_CACHE = [
   'index.html',
   'service-worker.js',
   'app.js',
-  'styles.css'
+  'styles.css',
+  'offline.html'
 ];
 
 // Install event
@@ -38,28 +39,25 @@ self.addEventListener('activate', (event) => {
 // Fetch event - network-first with proper fallback
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    fetch(event.request)
-      .then((networkResponse) => {
-        if (networkResponse.ok) {
-          const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME)
-            .then((cache) => {
-              cache.put(event.request, responseClone);
-            });
-          return networkResponse;
+    caches.match(event.request)
+      .then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
         }
-        throw new Error('Network response was not ok');
+        return fetch(event.request)
+          .then((networkResponse) => {
+            if (!networkResponse || !networkResponse.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, networkResponse.clone());
+              return networkResponse;
+            });
+          });
       })
       .catch(() => {
-        return caches.match(event.request)
-          .then((cachedResponse) => {
-            if (cachedResponse) {
-              return cachedResponse;
-            }
-            // If no cache found, return network request
-            // This might also fail if we're offline
-            return fetch(event.request);
-          });
+        // Optionally return a fallback offline page or asset
+        return caches.match('offline.html');
       })
   );
 });

@@ -245,6 +245,9 @@ function copyToClipboard(text) {
 
 function removeToken(index) {
     const encryptedTokens = localStorage.getItem('tokens');
+    if (confirm("Delete token?") == false) {
+        return;
+    }
     if (encryptedTokens) {
         const tokens = JSON.parse(decrypt(encryptedTokens)) || [];
         tokens.splice(index, 1); // Remove the token at the specified index
