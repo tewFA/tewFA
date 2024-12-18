@@ -1,20 +1,16 @@
 /* Light palette */
 :root {
-  --background-color: #f0f0f0;
+  --background-color: #ffffff;
   --secondary-color: rgba(195, 195, 195, 0.65);
-  --secondary-border-color: rgba(186, 186, 186, 0.8);
+  /* --secondary-border-color: rgba(186, 186, 186, 0.8); */
   --text-color: #333;
-  --accent-color: #760eff;
-  --accent-border-color: #6c08ef;
+  --accent-color: #5f20b27b;
 }
 
 /* Global Elements */
 a {
   padding: 0;
   margin: 0;
-}
-span {
-  opacity: 0.7;
 }
 body {
   margin: 0;
@@ -29,8 +25,8 @@ body {
 }
 button, input {
   border: none;
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.85rem;
   max-width: 10rem;
 }
 input {
@@ -41,8 +37,7 @@ input {
 button {
   width: fit-content;
   
-  background-color: var(--accent-color);
-  border: var(--accent-border-color) 0.2rem solid;
+  background-color: var(--secondary-color);
   color: white;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
@@ -50,8 +45,12 @@ button {
 }
 
 button:hover {
-  background-color: var(--accent-border-color);
+  background-color: var(--accent-color);
   color: var(--text-color);
+  transform: scale(1.05);
+}
+button:active {
+  transform: scale(1.1);
 }
 button > svg {
   height: 1rem;
@@ -67,6 +66,13 @@ button:has(svg) {
 input:active, input:focus {
   border: none;
 }
+p {
+  margin: 0;
+}
+
+span {
+  opacity: 0.7;
+}
 
 /* Components */
 .header {
@@ -75,7 +81,7 @@ input:active, input:focus {
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
-  gap: 1rem;
+  gap: 0.75rem;
   top: 1rem;
   width: fit-content;
   left: 50%;
@@ -83,7 +89,7 @@ input:active, input:focus {
   z-index: 10;
   
   background-color: var(--secondary-color);
-  border: var(--secondary-border-color) 0.2rem solid;
+  /* border: var(--secondary-border-color) 0.2rem solid; */
   color: var(--text-color);
   backdrop-filter: blur(1rem);
   -webkit-backdrop-filter: blur(1rem);
@@ -96,7 +102,7 @@ input:active, input:focus {
   padding: 1rem;
   
   border-radius: 1.5rem;
-  border: var(--secondary-border-color) 0.2rem solid;
+  /* border: var(--secondary-border-color) 0.2rem solid; */
   background-color: var(--secondary-color);
   cursor: pointer;
 }
@@ -167,29 +173,25 @@ input:active, input:focus {
   align-items: center;
   min-width: 10rem;
   max-width: 95%;
-  padding: 0.5rem;
-  padding-left: 1.75rem;
+  padding: 0.65rem;
+  gap: 0.5rem;
   
   background: var(--secondary-color);
-  border: var(--secondary-border-color) 0.2rem solid;
-  border-radius: 1rem;
+  /* border: var(--secondary-border-color) 0.2rem solid; */
+  border-radius: 10rem;
   backdrop-filter: blur(1rem);
   -webkit-backdrop-filter: blur(1rem);
-  animation: grow 0.3s ease;
+  animation: slideFromLeft 0.3s ease;
 }
-@keyframes grow {
+@keyframes slideFromLeft {
   0% {
-    scale: 0.4;
+    transform: translateX(-100%);
   }
   100% {
-    scale: 1;
+    transform: none;
   }
 }
 .color-circle {
-  position: absolute;
-  left: 0.5rem;
-  top: 50%;
-  transform: translateY(-50%);
   height: 0.75rem;
   aspect-ratio: 1/1;
   
@@ -213,12 +215,12 @@ input:active, input:focus {
   flex-direction: column;
   justify-content: left;
   padding: 1rem;
-  min-width: 15rem;
+  width: 20rem;
   max-width: 90%;
   gap: 1rem;
   
   background-color: var(--secondary-color);
-  border: var(--secondary-border-color) 0.2rem solid;
+  /* border: var(--secondary-border-color) 0.2rem solid; */
   border-radius: 1.5rem;
   text-align: left;
 }
@@ -250,7 +252,7 @@ input:active, input:focus {
   gap: 0.25rem;
   
   background-color: var(--secondary-color);
-  border: var(--secondary-border-color) 0.2rem solid;
+  /* border: var(--secondary-border-color) 0.2rem solid; */
   border-radius: 1rem;
   backdrop-filter: blur(3rem);
   z-index: 11;
@@ -286,18 +288,21 @@ input:active, input:focus {
   position: fixed;
   display: flex;
   flex-direction: column;
-  bottom: 0.5rem;
-  left: 0.5rem;
+  bottom: 1rem;
+  left: 1rem;
+  max-height: 15rem;
+  overflow: scroll;
   gap: 0.25rem;
+  z-index: 16;
 }
 
 /* Dark Mode */
 @media (prefers-color-scheme: dark) {
   /* Dark palette */
   :root {
-    --background-color: rgb(16, 16, 16);
-    --secondary-color: rgba(34, 34, 34, 0.65);
-    --secondary-border-color: rgba(41, 41, 41, 0.8);
+    --background-color: rgb(0, 0, 0);
+    --secondary-color: rgba(40, 40, 40, 0.7);
+    --secondary-border-color: rgba(40, 40, 40, 0.8);
     --text-color: #dcdcdc;
   }
 }

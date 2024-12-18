@@ -1,43 +1,17 @@
 const tokenList = document.getElementById('token-list');
 const passcodeLockScreen = document.getElementById('passcode-lock-screen');
 const passcodeSetupScreen = document.getElementById('passcode-setup-screen');
-const addTokenModal = document.getElementById('add-token-modal');
 let countdownTime = 30; // Time in seconds for the countdown
 const timerElement = document.getElementById('timer');
 const editTokenModal = document.getElementById('edit-token-modal');
 let editingTokenIndex = null; // To track the token being edited
 
 // Utilities
-
-function getLocation(id) {
-    const element = document.getElementById(id);
-    
-    if (element) {
-      const rect = element.getBoundingClientRect();
-      const x = rect.left; // X-coordinate
-      const y = rect.top;  // Y-coordinate
-      
-      return [x, y];
-    } else {
-      console.error('Element with the specified id not found.');
-    }
-}
 function show(id) {
     document.getElementById(id).classList.remove('hidden');
 }
 function hide(id) {
     document.getElementById(id).classList.add('hidden');
-}
-function showContextMenu(id, buttonId) {
-    getLocation(buttonId);
-    const buttonX = getLocation(buttonId)[0];
-    const buttonY = getLocation(buttonId)[1];
-    const contextMenuX = buttonX + 0; // X-coordinate of the context menu
-    const contextMenuY = buttonY + 50; // X-coordinate of the context menu
-    
-    show(id);
-    document.getElementById(id).style.left = contextMenuX + 'px';
-    document.getElementById(id).style.top  = contextMenuY + 'px';
 }
 
 // Encryption setup (using CryptoJS)
@@ -58,23 +32,17 @@ const decrypt = (ciphertext) => {
 // Custom toast notifications
 function sendToast(message, color) {
     const notificationCenter = document.getElementById('notifications');
-    
+
     const toast = document.createElement('div');
+        toast.innerHTML = `
+            <div class="color-circle" style="background: ${color};"></div>
+            <p>${message}</p>
+        `;
         toast.classList.add('toast');
-        toast.textContent = message;
-         notificationCenter.appendChild(toast);
-        
-        // Create a separate color circle element
-        const colorCircle = document.createElement('div');
-        colorCircle.classList.add('color-circle');
-        toast.appendChild(colorCircle);
-        
-        // Set the style.background property
-        colorCircle.style.background = color;
-    
+        notificationCenter.appendChild(toast);
     setTimeout(() => {
       toast.remove();
-    }, 3000); // wait for 3 seconds
+    }, 3000);
 }
 
 // Function to calculate the remaining time in the current 30-second interval
@@ -162,16 +130,6 @@ function unlockApp() {
     }
 }
 
-// Show the Add Token Modal
-function showAddTokenModal() {
-    addTokenModal.classList.remove('hidden');
-}
-
-// Close the Add Token Modal
-function closeAddTokenModal() {
-    addTokenModal.classList.add('hidden');
-}
-
 // Load tokens from localStorage and render them
 function loadTokens() {
     const encryptedTokens = localStorage.getItem('tokens');
@@ -193,7 +151,7 @@ function addToken() {
         tokens.push({ name, secret, color });
         localStorage.setItem('tokens', encrypt(JSON.stringify(tokens)));
         renderTokens(tokens);
-        closeAddTokenModal();
+        hide('add-token-modal');
         sendToast('Token added successfully!', 'green');
     } else {
         alert('Please fill in both the name and secret key fields.');
