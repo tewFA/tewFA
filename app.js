@@ -13,6 +13,9 @@ function show(id) {
 function hide(id) {
     document.getElementById(id).classList.add('hidden');
 }
+function setupClient() {
+    document.documentElement.classList.add('mac');
+}
 
 // Encryption setup (using CryptoJS)
 const secretKey = localStorage.getItem('secretKey') || '123'; // Store this securely
