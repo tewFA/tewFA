@@ -307,3 +307,16 @@ span {
     --text-color: #dcdcdc;
   }
 }
+
+.mac .header {
+    display: none;
+}
+
+.mac body {
+    padding-top: 0 !important;
+    background: transparent !important;
+}
+
+.mac #passcode-setup-screen, .mac #passcode-lock-screen, .mac #add-token-form {
+    background: transparent !important;
+}
