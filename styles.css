@@ -313,8 +313,11 @@ span {
 }
 
 .mac body {
-    padding-top: 0 !important;
     background: transparent !important;
+}
+
+.mac .token-list {
+  margin-top: 0 !important; /* Avoid overlap with header */
 }
 
 .mac #passcode-setup-screen, .mac #passcode-lock-screen, .mac #add-token-form {
